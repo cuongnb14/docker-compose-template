@@ -1,0 +1,9 @@
+version: '3.1'
+
+services:
+    kibana:
+        image: kibana
+        environment:
+            - ELASTICSEARCH_URL=http://localhost:9200/
+        ports:
+            - 5601:5601

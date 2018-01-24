@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+    swarm_visualizer:
+        image: dockersamples/visualizer
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        ports:
+            - 9000:8080
+        hostname: swarm_visualizer
+        restart: always
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "100M"
+                max-file: "3"

@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  kafka:
+    image: wurstmeister/kafka
+    volumes:
+      - ./cassandra-data/:/var/lib/cassandra
+    ports:
+      - 9092:9092
+    environment:
+      - KAFKA_ADVERTISED_HOST_NAME: "kafka"
+      - KAFKA_CREATE_TOPICS: 'comment_notify:1:1,feed_published:1:1,feed_unpublished:1:1'
+    hostname: kafka
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+        max-file: "3"
+

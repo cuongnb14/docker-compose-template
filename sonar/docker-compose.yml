@@ -3,6 +3,8 @@ version: '3.1'
 services:
   sonarqube:
     image: sonarqube
+    depends_on:
+      - mysql
     ports:
       - 9000:9000
     environment:
@@ -31,3 +33,5 @@ services:
       options:
         max-size: "100M"
         max-file: "3"
+networks:
+  db-back:

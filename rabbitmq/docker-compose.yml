@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.7.4
+    # volumes:
+    #   - 
+    ports:
+      - 15672:15672
+    hostname: rabbitmq
+    # restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+        max-file: "3"
+

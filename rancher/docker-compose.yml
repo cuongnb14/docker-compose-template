@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  rancher:
+    image: rancher/rancher
+    volumes:
+      - ./rancher-data:/var/lib/rancher
+    ports:
+      - 80:80
+      - 443:443
+    hostname: rancher
+    restart: unless-stopped
+    command: --acme-domain <YOUR.DNS.NAME>
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10M"
+        max-file: "3"
+

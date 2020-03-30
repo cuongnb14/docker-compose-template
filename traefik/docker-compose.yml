@@ -1,0 +1,60 @@
+version: "2.4"
+
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks:
+  traefik-net:
+    external: true
+
+services:
+  traefik:
+    <<: *default
+    image: traefik:v2.0
+    container_name: traefik
+    command:
+      - "--log.level=INFO"
+      #- "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.http.address=:80"
+      - "--entrypoints.https.address=:443"
+      - "--certificatesresolvers.ssl.acme.httpchallenge=true"
+      - "--certificatesresolvers.ssl.acme.httpchallenge.entrypoint=http"
+      #- "--certificatesresolvers.ssl.acme.tlschallenge=true"
+      #- "--certificatesresolvers.ssl.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.ssl.acme.email=cuongnb14@gmail.com"
+      - "--certificatesresolvers.ssl.acme.storage=/letsencrypt/acme.json"
+      - "--global.sendAnonymousUsage=false"
+      - "--accesslog=true"
+      #- "--metrics.prometheus=true"
+    ports:
+      - 80:80
+      - 443:443
+      # - "127.0.0.1:8080:8080"
+    labels:
+      - "traefik.enable=true"
+      # middleware redirect
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      # global redirect to https
+      - "traefik.http.routers.redirs.rule=hostregexp(`{host:.+}`)"
+      - "traefik.http.routers.redirs.entrypoints=http"
+      - "traefik.http.routers.redirs.middlewares=redirect-to-https"
+      # Basic Auth
+      - "traefik.http.middlewares.dev-auth.basicauth.users=admin:$$apr1$$Wqv22bo4$$wG/J3dFs1HC6IGjyyh4D41"
+    volumes:
+      - ./letsencrypt:/letsencrypt
+      - /var/run/docker.sock:/var/run/docker.sock:ro

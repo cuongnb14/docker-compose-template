@@ -1,5 +1,10 @@
 version: "3"
 
+
+networks: 
+  traefik-net:
+    external: true
+
 services:
   portainer:
     image: portainer/portainer
@@ -7,11 +12,22 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./portainer_data:/data
     ports:
-      - "9000:9000"
+      - "127.0.0.1:9000:9000"
     hostname: portainer
     restart: always
+    labels:
+      traefik.enable: true
+      traefik.docker.network: traefik-net
+      traefik.http.routers.$PROD_CONTAINER_NAME.rule: Host(`portainer.example.com`)
+      traefik.http.routers.$PROD_CONTAINER_NAME.entrypoints: https
+      traefik.http.routers.$PROD_CONTAINER_NAME.tls.certresolver: ssl
+      traefik.http.services.$PROD_CONTAINER_NAME.loadbalancer.server.port: 9000
+    
+    networks: 
+      - traefik-net
+
     logging:
       driver: "json-file"
       options:
-        max-size: "100M"
+        max-size: "10M"
         max-file: "3"

@@ -1,22 +1,22 @@
 version: "3"
 
 services:
-    cassandra:
-        image: cassandra:2.2
-        networks:
-            - db-back
-        volumes:
-            - ./cassandra-data/:/var/lib/cassandra
-        ports:
-            - 9042:9042
-        hostname: cassandra
-        restart: always
-        logging:
-            driver: "json-file"
-            options:
-                max-size: "100M"
-                max-file: "3"
+  cassandra:
+    image: cassandra:2.2
+    networks:
+      - db-back
+    volumes:
+      - ./cassandra-data/:/var/lib/cassandra
+    ports:
+      - 9042:9042
+    hostname: cassandra
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+        max-file: "3"
 
 networks:
-    db-back:
-      #external: true
+  db-back:
+    #external: true

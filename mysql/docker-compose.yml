@@ -1,25 +1,25 @@
 version: "3"
 
 services:
-    mysql:
-        image: mysql:5.7
-        networks:
-            - db-back
-        volumes:
-            - ./mysql-data/:/var/lib/mysql/
-            - ./mysql-init-data/:/docker-entrypoint-initdb.d/
-        env_file:
-            - ./docker-env
-        ports:
-            - "0.0.0.0:3306:3306"
-        hostname: mysql
-        # restart: always
-        logging:
-            driver: "json-file"
-            options:
-                max-size: "100M"
-                max-file: "3"
+  mysql:
+    image: mysql:5.7
+    networks:
+      - db-back
+    volumes:
+      - ./mysql-data/:/var/lib/mysql/
+      - ./mysql-init-data/:/docker-entrypoint-initdb.d/
+    env_file:
+      - ./docker-env
+    ports:
+      - "0.0.0.0:3306:3306"
+    hostname: mysql
+    # restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+        max-file: "3"
 
 networks:
-    db-back:
-      #external: true
+  db-back:
+    #external: true

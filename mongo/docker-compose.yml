@@ -1,22 +1,22 @@
 version: "3"
 
 services:
-    mongo:
-        image: mongo
-        networks:
-            - db-back
-        volumes:
-            - ./mongo-data/:/data/db
-        ports:
-            - "27017:27017"
-        hostname: mongo
-        # restart: always
-        logging:
-            driver: "json-file"
-            options:
-                max-size: "100M"
-                max-file: "3"
+  mongo:
+    image: mongo
+    networks:
+      - db-back
+    volumes:
+      - ./mongo-data/:/data/db
+    ports:
+      - "27017:27017"
+    hostname: mongo
+    # restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+        max-file: "3"
 
 networks:
-    db-back:
-      #external: true
+  db-back:
+    #external: true

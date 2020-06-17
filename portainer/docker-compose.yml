@@ -19,10 +19,10 @@ services:
     labels:
       traefik.enable: true
       traefik.docker.network: traefik-net
-      traefik.http.routers.$PROD_CONTAINER_NAME.rule: Host(`portainer.example.com`)
-      traefik.http.routers.$PROD_CONTAINER_NAME.entrypoints: https
-      traefik.http.routers.$PROD_CONTAINER_NAME.tls.certresolver: ssl
-      traefik.http.services.$PROD_CONTAINER_NAME.loadbalancer.server.port: 9000
+      traefik.http.routers.portainer.rule: Host(`portainer.example.com`)
+      traefik.http.routers.portainer.entrypoints: https
+      traefik.http.routers.portainer.tls.certresolver: ssl
+      traefik.http.services.portainer.loadbalancer.server.port: 9000
     
     networks: 
       - traefik-net

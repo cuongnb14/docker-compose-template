@@ -14,6 +14,7 @@ services:
     ports:
       - "127.0.0.1:9000:9000"
     hostname: portainer
+    container_name: portainer
     restart: always
     labels:
       traefik.enable: true

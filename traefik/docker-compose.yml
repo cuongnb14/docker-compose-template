@@ -19,7 +19,10 @@ x-default: &default
 networks:
   traefik-net:
     external: true
-
+    
+volumes: 
+  traefik_data:
+  
 services:
   traefik:
     <<: *default
@@ -37,10 +40,13 @@ services:
       #- "--certificatesresolvers.ssl.acme.tlschallenge=true"
       #- "--certificatesresolvers.ssl.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
       - "--certificatesresolvers.ssl.acme.email=cuongnb14@gmail.com"
-      - "--certificatesresolvers.ssl.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.ssl.acme.storage=/data/letsencrypt/acme.json"
       - "--global.sendAnonymousUsage=false"
       - "--accesslog=true"
-      #- "--metrics.prometheus=true"
+      - "--accesslog.filepath=/data/logs/access.log"
+      # - "--accesslog.bufferingsize=100" # un-comment if need optimize performance and don't need real-time
+      # - "--accesslog.filters.minduration=180ms" # keep access logs when requests take longer than the specified duration
+      - "--metrics.prometheus=true"
     ports:
       - 80:80
       - 443:443
@@ -56,5 +62,5 @@ services:
       # Basic Auth
       - "traefik.http.middlewares.dev-auth.basicauth.users=admin:$$apr1$$Wqv22bo4$$wG/J3dFs1HC6IGjyyh4D41"
     volumes:
-      - ./letsencrypt:/letsencrypt
+      - traefik_data:/data
       - /var/run/docker.sock:/var/run/docker.sock:ro

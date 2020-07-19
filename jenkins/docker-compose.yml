@@ -5,8 +5,6 @@ version: "3.1"
 services:
   jenkins:
     image: jenkins/jenkins
-    environment:
-      - ELASTICSEARCH_URL=http://13.81.112.245:9200/
     ports:
       - 8080:8080
       - 50000:50000

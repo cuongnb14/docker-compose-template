@@ -2,7 +2,7 @@ version: '2.4'
 
 x-default: &default
   networks:
-    - ontiva-net
+    - traefik-net
   # cpus: 0.5
   # mem_limit: 500M
   restart: always
@@ -15,6 +15,10 @@ x-default: &default
     options:
       max-size: "10M"
       max-file: "3"
+
+networks:
+  traefik-net:
+
 volumes:
   postgres_data:
   

@@ -1,13 +1,32 @@
-# Use postgres/example user/password credentials
-version: "3.1"
+version: '2.4'
 
+x-default: &default
+  networks:
+    - ontiva-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+volumes:
+  postgres_data:
+  
 services:
   postgres:
-    image: postgres:9.4
+    <<: *default
+    image: postgres:12.4
     ports:
       - 5432:5432
-    restart: always
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     environment:
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: example

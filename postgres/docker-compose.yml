@@ -22,6 +22,8 @@ services:
   postgres:
     <<: *default
     image: postgres:12.4
+    container_name: postgres
+    hostname: postgres
     ports:
       - 5432:5432
     volumes:

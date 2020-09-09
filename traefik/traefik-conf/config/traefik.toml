@@ -1,0 +1,10 @@
+# [[tls.certificates]]
+#   certFile = "/traefik-conf/certs/cloudflare/tls.crt"
+#   keyFile = "/traefik-conf/certs/cloudflare/tls.key"
+
+# [tls.options]
+#   [tls.options.default]
+#     [tls.options.default.clientAuth]
+#       # in PEM format. each file can contain multiple CAs.
+#       caFiles = ["/traefik-conf/certs/cloudflare/cacerts.pem"]
+#       clientAuthType = "RequireAndVerifyClientCert"

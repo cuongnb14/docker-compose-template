@@ -21,7 +21,7 @@ networks:
     external: true
     
 volumes: 
-  traefik_data:
+  traefik_logs:
   
 services:
   traefik:

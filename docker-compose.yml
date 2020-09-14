@@ -1,0 +1,40 @@
+version: "2.4"
+
+x-default: &default
+  networks:
+    - example-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks:
+  example-net:
+    external: true
+    
+volumes: 
+  example_logs:
+  
+services:
+  example:
+    <<: *default
+    image: example
+    container_name: example
+    command:
+      - "--log.level=INFO"
+    ports:
+      - 80:80
+      - 443:443
+    labels:
+      - "traefik.enable=true"
+    volumes:
+      - example_logs:/logs
+

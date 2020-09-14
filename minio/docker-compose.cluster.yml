@@ -1,0 +1,50 @@
+version: "2.4"
+
+x-default: &default
+  # networks:
+  #   - example-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+  
+  environment:
+    MINIO_ACCESS_KEY: AKIAIOSFODNN7EXAMPLE
+    MINIO_SECRET_KEY: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+  command: server http://minio-{1...4}/export/data{1...4}
+
+services:
+  minio-1:
+    <<: *default
+    image: minio/minio
+    container_name: minio-1
+    ports:
+      - 9000:9000
+  
+  minio-2:
+    <<: *default
+    image: minio/minio
+    container_name: minio-2
+
+  minio-3:
+    <<: *default
+    image: minio/minio
+    container_name: minio-3
+
+  minio-4:
+    <<: *default
+    image: minio/minio
+    container_name: minio-4
+
+  
+  
+
+

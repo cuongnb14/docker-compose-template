@@ -35,6 +35,12 @@ services:
       - 443:443
     labels:
       - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.api.rule=Host(`example.com`)"
+      - "traefik.http.routers.api.entrypoints=https"
+      - "traefik.http.routers.api.tls.certresolver=ssl"
+      - "traefik.http.services.api.loadbalancer.server.port=8000"
+
     volumes:
       - example_logs:/logs
 

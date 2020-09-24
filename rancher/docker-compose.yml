@@ -1,19 +1,39 @@
-version: "3"
+version: "2.4"
+
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks:
+  traefik-net:
+    external: true
+    
+volumes: 
+  rancher_data:
 
 services:
   rancher:
-    image: rancher/rancher
+    <<: *default
+    image: rancher/rancher:v2.4-head
     volumes:
-      - ./rancher-data:/var/lib/rancher
+      - rancher_data:/var/lib/rancher
     ports:
       - 80:80
       - 443:443
     hostname: rancher
-    restart: unless-stopped
-    command: --acme-domain <YOUR.DNS.NAME>
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10M"
-        max-file: "3"
+    container_name: rancher
+    restart: always
+    # command: --acme-domain <YOUR.DNS.NAME>
 

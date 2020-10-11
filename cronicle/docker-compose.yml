@@ -1,0 +1,41 @@
+version: "3"
+
+networks: 
+  traefik-net:
+    external: true
+
+volumes:
+  cronicle_data:
+  cronicle_log:
+  cronicle_plugin:
+  
+services:
+  cronicle:
+    image: nicholasamorim/cronicle:0.8.45
+    volumes:
+      - cronicle_data:/opt/cronicle/data:rw
+      - cronicle_log:/opt/cronicle/logs:rw
+      - cronicle_plugin:/opt/cronicle/plugins	
+    ports:
+      - "127.0.0.1:3012:3012"
+    environment:
+      CRONICLE_base_app_url: 'http://localhost:3012'
+    hostname: cronicle
+    container_name: cronicle
+    restart: always
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: traefik-net
+      traefik.http.routers.scheduler.rule: Host(`scheduler.example.com`)
+      traefik.http.routers.scheduler.entrypoints: https
+      traefik.http.routers.scheduler.tls.certresolver: ssl
+      traefik.http.services.scheduler.loadbalancer.server.port: 3012
+    
+    networks: 
+      - traefik-net
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10M"
+        max-file: "3"

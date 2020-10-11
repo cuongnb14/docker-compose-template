@@ -10,7 +10,7 @@ services:
     image: portainer/portainer
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./portainer_data:/data
+      - portainer_data:/data
     ports:
       - "127.0.0.1:9000:9000"
     hostname: portainer

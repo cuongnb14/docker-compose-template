@@ -5,6 +5,9 @@ networks:
   traefik-net:
     external: true
 
+volumes:
+  portainer_data:
+  
 services:
   portainer:
     image: portainer/portainer

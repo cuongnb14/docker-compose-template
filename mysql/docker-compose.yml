@@ -1,26 +1,44 @@
-version: "3"
+version: "2.4"
+
+x-default: &default
+  networks:
+    - db-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks:
+  db-net:
+    #external: true
+
+volumes:
+  mysql_data:
 
 services:
   mysql:
+    <<: *default
     image: mysql:5.7
     networks:
-      - db-back
+      - db-net
     volumes:
-      - ./mysql-data/:/var/lib/mysql/
-      - ./mysql-init-data/:/docker-entrypoint-initdb.d/
-    env_file:
-      - ./docker-env
+      - mysql_data:/var/lib/mysql/
+      # - ./mysql-init-data/:/docker-entrypoint-initdb.d/
+    environment:
+      - MYSQL_ROOT_PASSWORD=123456
+      - MYSQL_USER=sample
+      - MYSQL_PASSWORD=sample
+      - MYSQL_DATABASE=sample
     ports:
-      - "0.0.0.0:3306:3306"
+      - "127.0.0.1:3306:3306"
     hostname: mysql
-    # restart: always
+    container_name: mysql
     command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_general_ci", "--skip-character-set-client-handshake"]
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100M"
-        max-file: "3"
-
-networks:
-  db-back:
-    #external: true

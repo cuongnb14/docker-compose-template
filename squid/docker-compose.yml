@@ -44,5 +44,6 @@ services:
 
     volumes:
       - squid_data:/var/spool/squid
-      - ./squid.conf:/etc/squid/squid.conf
+      - ./squid-conf/squid.conf:/etc/squid/squid.conf
+      - ./squid-conf/auth:/etc/squid/auth
 

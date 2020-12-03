@@ -19,7 +19,11 @@ x-default: &default
 networks:
   traefik-net:
     external: true
-    
+
+volumes:
+  wordpress_data:
+  mysql_data:
+  
 services:
 
   wordpress:
@@ -33,7 +37,7 @@ services:
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DB_NAME: wordpress
     volumes:
-      # - ./wordpress:/var/www/html
+      - wordpress_data:/var/www/html
       - ./php-conf/.htaccess:/var/www/html/.htaccess
     labels:
       - "traefik.enable=false"
@@ -52,4 +56,4 @@ services:
       MYSQL_PASSWORD: wordpress
       MYSQL_RANDOM_ROOT_PASSWORD: '1'
     volumes:
-      - ./db:/var/lib/mysql
+      - mysql_data:/var/lib/mysql

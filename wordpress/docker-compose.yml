@@ -2,7 +2,7 @@ version: '2.4'
 
 x-default: &default
   networks:
-    - wordpress-net
+    - traefik-net
   # cpus: 0.5
   # mem_limit: 500M
   restart: always
@@ -17,8 +17,9 @@ x-default: &default
       max-file: "3"
 
 networks:
-  wordpress-net:
-
+  traefik-net:
+    external: true
+    
 services:
 
   wordpress:
@@ -28,20 +29,27 @@ services:
       - 8080:80
     environment:
       WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_USER: exampleuser
-      WORDPRESS_DB_PASSWORD: examplepass
-      WORDPRESS_DB_NAME: exampledb
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
     volumes:
       # - ./wordpress:/var/www/html
       - ./php-conf/.htaccess:/var/www/html/.htaccess
+    labels:
+      - "traefik.enable=false"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.webhook.rule=Host(`wordpress.com`)"
+      - "traefik.http.routers.webhook.entrypoints=https"
+      - "traefik.http.routers.webhook.tls.certresolver=ssl"
+      - "traefik.http.services.webhook.loadbalancer.server.port=80"
 
   db:
     <<: *default
     image: mysql:5.7
     environment:
-      MYSQL_DATABASE: exampledb
-      MYSQL_USER: exampleuser
-      MYSQL_PASSWORD: examplepass
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
       MYSQL_RANDOM_ROOT_PASSWORD: '1'
     volumes:
       - ./db:/var/lib/mysql

@@ -26,14 +26,20 @@ volumes:
 services:
   rancher:
     <<: *default
-    image: rancher/rancher:v2.4-head
+    image: rancher/rancher:v2.5-head
     volumes:
       - rancher_data:/var/lib/rancher
-    ports:
-      - 80:80
-      - 443:443
+    # ports:
+    #   - 80:80
+    #   - 443:443
     hostname: rancher
     container_name: rancher
     restart: always
     # command: --acme-domain <YOUR.DNS.NAME>
-
+    labels:
+      - "traefik.enable=false"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.api.rule=Host(`rancher.example.com`)"
+      - "traefik.http.routers.api.entrypoints=https"
+      - "traefik.http.routers.api.tls.certresolver=ssl"
+      - "traefik.http.services.api.loadbalancer.server.port=80"

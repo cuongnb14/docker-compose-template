@@ -7,7 +7,7 @@ x-default: &default
   # mem_limit: 500M
   restart: always
   # init: true
-  # privileged: true
+  privileged: true
   # stdin_open: true
   # tty: true
   logging:

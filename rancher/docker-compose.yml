@@ -39,7 +39,7 @@ services:
     labels:
       - "traefik.enable=false"
       - "traefik.docker.network=traefik-net"
-      - "traefik.http.routers.api.rule=Host(`rancher.example.com`)"
-      - "traefik.http.routers.api.entrypoints=https"
-      - "traefik.http.routers.api.tls.certresolver=ssl"
-      - "traefik.http.services.api.loadbalancer.server.port=80"
+      - "traefik.http.routers.rancher.rule=Host(`rancher.example.com`)"
+      - "traefik.http.routers.rancher.entrypoints=https"
+      - "traefik.http.routers.rancher.tls.certresolver=ssl"
+      - "traefik.http.services.rancher.loadbalancer.server.port=80"

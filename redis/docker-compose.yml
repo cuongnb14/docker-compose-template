@@ -20,15 +20,19 @@ volumes:
 services:
   redis:
     <<: *default
-    image: 'bitnami/redis:6.0'
+    image: 'bitnami/redis:6.2.3'
     ports:
       - 6379:6379
     hostname: redis
     container_name: redis
     environment:
       # ALLOW_EMPTY_PASSWORD is recommended only for development.
-      - ALLOW_EMPTY_PASSWORD=yes
-      - REDIS_PASSWORD=password123
+      - ALLOW_EMPTY_PASSWORD=no
+      - REDIS_PASSWORD=123
+
+      # Disable AOF and append command if you don't want persistent data (for improve performance)
+      - REDIS_AOF_ENABLED=no
+    command: ["/opt/bitnami/scripts/redis/run.sh", "--save", ""]
     volumes:
       - 'redis_data:/bitnami/redis/data'
 

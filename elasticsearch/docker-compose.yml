@@ -1,7 +1,50 @@
-version: '3.1'
+version: '2.4'
+
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  # restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+volumes:
+  elasticsearch_data:
+
+networks:
+  traefik-net:
+    external:
+      name: localdev
 
 services:
   elasticsearch:
-    image: elasticsearch:1.7.6
+    <<: *default
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.13.1
+    container_name: elasticsearch
+    hostname: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms4g -Xmx4g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
     ports:
-      - 9200:9200
+      - 127.0.0.1:9200:9200
+    labels:
+      - "traefik.enable=false"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.api.rule=Host(`elasticsearch.example.com`)"
+      - "traefik.http.routers.api.entrypoints=https"
+      - "traefik.http.routers.api.tls.certresolver=ssl"
+      - "traefik.http.services.api.loadbalancer.server.port=9200"

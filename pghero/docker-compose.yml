@@ -1,0 +1,34 @@
+version: '2.4'
+
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks:
+  traefik-net:
+
+volumes:
+  postgres_data:
+  
+services:
+  pghero:
+    <<: *default
+    image: ankane/pghero:v2.8.1
+    container_name: pghero
+    hostname: pghero
+    ports:
+      - 8080:8080
+    environment:
+      DATABASE_URL: postgres://user:pass@host:port/dbname

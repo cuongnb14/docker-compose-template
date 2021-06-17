@@ -1,0 +1,52 @@
+version: "2.4"
+
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks:
+  traefik-net:
+    external: true
+    
+volumes: 
+  registry_data:
+  
+services:
+  registry:
+    <<: *default
+    restart: always
+    image: registry:2
+    ports:
+      - 5000:5000
+    # environment:
+      # REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+      # REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+      # REGISTRY_AUTH: htpasswd
+      # REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+      # REGISTRY_AUTH_HTPASSWD_REALM: Registry Realm
+    volumes:
+      - registry_data:/var/lib/registry
+      # - /path/certs:/certs
+      # - /path/auth:/auth
+  
+    labels:
+      - "traefik.enable=false"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.registry.rule=Host(`registry.example.com`)"
+      - "traefik.http.routers.registry.entrypoints=https"
+      - "traefik.http.routers.registry.tls.certresolver=ssl"
+      - "traefik.http.services.registry.loadbalancer.server.port=5000"
+
+

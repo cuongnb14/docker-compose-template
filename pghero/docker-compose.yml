@@ -18,6 +18,7 @@ x-default: &default
 
 networks:
   traefik-net:
+    external: true
 
 volumes:
   postgres_data:
@@ -29,6 +30,14 @@ services:
     container_name: pghero
     hostname: pghero
     ports:
-      - 8080:8080
+      - 127.0.0.1:8080:8080
     environment:
       DATABASE_URL: postgres://user:pass@host:port/dbname
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.pghero.rule=Host(`pghero.example.com`)"
+      - "traefik.http.routers.pghero.entrypoints=https"
+      - "traefik.http.routers.pghero.tls.certresolver=ssl"
+      - "traefik.http.services.pghero.loadbalancer.server.port=8080"
+      - label "traefik.http.routers.pghero.middlewares=dev-auth"

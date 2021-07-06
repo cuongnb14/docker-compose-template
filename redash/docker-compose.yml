@@ -46,6 +46,8 @@ services:
 
   redis:
     image: redis:5.0-alpine
+    container_name: redash_redis
+    hostname: redash_redis
     restart: always
     networks:
       - traefik-net
@@ -57,6 +59,8 @@ services:
 
   postgres:
     image: postgres:9.6-alpine
+    container_name: redash_postgres
+    hostname: redash_postgres
     env_file: ./env
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -81,10 +85,10 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik-net"
-      - "traefik.http.routers.api.rule=Host(`redash.example.com`)"
-      - "traefik.http.routers.api.entrypoints=https"
-      - "traefik.http.routers.api.tls.certresolver=ssl"
-      - "traefik.http.services.api.loadbalancer.server.port=80"
+      - "traefik.http.routers.redash.rule=Host(`redash.example.com`)"
+      - "traefik.http.routers.redash.entrypoints=https"
+      - "traefik.http.routers.redash.tls.certresolver=ssl"
+      - "traefik.http.services.redash.loadbalancer.server.port=80"
     networks:
       - traefik-net
       

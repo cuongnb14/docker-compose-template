@@ -1,0 +1,6 @@
+POSTGRES_PASSWORD=dev
+
+REDASH_REDIS_URL=redis://redis:6379/0
+REDASH_DATABASE_URL=postgresql://postgres:dev@postgres/postgres
+
+REDASH_WEB_WORKERS=4

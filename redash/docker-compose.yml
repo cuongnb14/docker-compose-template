@@ -6,7 +6,14 @@ x-redash-service: &redash-service
     - redis
   env_file: ./env
   restart: always
-  
+  networks:
+    - traefik-net
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
 services:
   server:
     <<: *redash-service
@@ -40,6 +47,13 @@ services:
   redis:
     image: redis:5.0-alpine
     restart: always
+    networks:
+      - traefik-net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10M"
+        max-file: "3"
 
   postgres:
     image: postgres:9.6-alpine
@@ -47,7 +61,14 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
-    
+    networks:
+      - traefik-net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10M"
+        max-file: "3"
+
   nginx:
     image: redash/nginx:latest
     # ports:
@@ -58,12 +79,24 @@ services:
       - server:redash
     restart: always
     labels:
-        - "traefik.enable=true"
-        - "traefik.docker.network=traefik-net"
-        - "traefik.http.routers.api.rule=Host(`redash.example.com`)"
-        - "traefik.http.routers.api.entrypoints=https"
-        - "traefik.http.routers.api.tls.certresolver=ssl"
-        - "traefik.http.services.api.loadbalancer.server.port=80"
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.api.rule=Host(`redash.example.com`)"
+      - "traefik.http.routers.api.entrypoints=https"
+      - "traefik.http.routers.api.tls.certresolver=ssl"
+      - "traefik.http.services.api.loadbalancer.server.port=80"
+    networks:
+      - traefik-net
+      
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10M"
+        max-file: "3"
 
 volumes:
   postgres_data:
+
+networks:
+  traefik-net:
+    external: true

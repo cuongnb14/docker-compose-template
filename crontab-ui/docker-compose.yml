@@ -14,6 +14,9 @@ services:
       - crontab_db:/crontab-ui/crontabs
     ports:
       - "127.0.0.1:8000:8000"
+    environment:
+      - BASIC_AUTH_USER=admin
+      - BASIC_AUTH_PWD=admin
     hostname: crontab_ui
     container_name: crontab_ui
     restart: always

@@ -47,7 +47,7 @@ services:
       #NODE_ENV: development
     
     volumes:
-      ghost_data:/var/lib/ghost/content
+      - ghost_data:/var/lib/ghost/content
     
     labels:
       traefik.enable: true

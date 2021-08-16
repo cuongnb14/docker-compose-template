@@ -1,0 +1,72 @@
+version: "2.4"
+
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks: 
+  traefik-net:
+    external: true
+
+volumes:
+  mysql_data:
+  ghost_data:
+
+services:
+
+  ghost:
+    <<: *default
+    image: ghost:4.11-alpine
+    hostname: ghost
+    container_name: ghost 
+    restart: always
+    # ports:
+    #   - 8080:2368
+    environment:
+      # see https://ghost.org/docs/config/#configuration-options
+      database__client: mysql
+      database__connection__host: db
+      database__connection__user: root
+      database__connection__password: CHANGEIT
+      database__connection__database: ghost
+      # this url value is just an example, and is likely wrong for your environment!
+      url: https://ghost.example.com
+      # contrary to the default mentioned in the linked documentation, this image defaults to NODE_ENV=production (so development mode needs to be explicitly specified if desired)
+      #NODE_ENV: development
+    
+    volumes:
+      ghost_data:/var/lib/ghost/content
+    
+    labels:
+      traefik.enable: true
+      traefik.docker.network: traefik-net
+      traefik.http.routers.portainer.rule: Host(`ghost.example.com`)
+      traefik.http.routers.portainer.entrypoints: https
+      traefik.http.routers.portainer.tls.certresolver: ssl
+      traefik.http.services.portainer.loadbalancer.server.port: 2368
+
+  db:
+    <<: *default
+    image: mysql:5.7
+    hostname: db
+    container_name: db
+    ports:
+      - 127.0.0.1:3306:3306
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: CHANGEIT
+
+    volumes:
+      - mysql_data:/var/lib/mysql/

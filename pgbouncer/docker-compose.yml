@@ -18,9 +18,7 @@ x-default: &default
 
 networks:
   traefik-net:
-
-volumes:
-  postgres_data:
+    external: true
   
 services:
   pgbouncer:
@@ -32,7 +30,10 @@ services:
       - 6432:6432
     environment:
       POSTGRESQL_USERNAME: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRESQL_PASSWORD: postgres
       POSTGRESQL_DATABASE: example
       POSTGRESQL_HOST: postgres
       POSTGRESQL_PORT: 5432
+      
+      PGBOUNCER_IGNORE_STARTUP_PARAMETERS: extra_float_digits
+      PGBOUNCER_DATABASE: atomex # PgBouncer exposed database. Default: postgres.

@@ -1,0 +1,38 @@
+version: '2.4'
+
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks:
+  traefik-net:
+
+volumes:
+  postgres_data:
+  
+services:
+  pgbouncer:
+    <<: *default
+    image: bitnami/pgbouncer:1.16.0
+    container_name: pgbouncer
+    hostname: pgbouncer
+    ports:
+      - 6432:6432
+    environment:
+      POSTGRESQL_USERNAME: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRESQL_DATABASE: example
+      POSTGRESQL_HOST: postgres
+      POSTGRESQL_PORT: 5432

@@ -26,7 +26,7 @@ volumes:
 services:
   traefik:
     <<: *default
-    image: traefik:v2.4
+    image: traefik:v2.5
     container_name: traefik
     command:
       - "--log.level=INFO"
@@ -48,6 +48,8 @@ services:
       # - "--accesslog.filters.minduration=180ms" # keep access logs when requests take longer than the specified duration
       - "--metrics.prometheus=true"
       - "--providers.file.directory=/traefik-conf/config"
+      # - "--api.dashboard=true"
+
     ports:
       - 80:80
       - 443:443
@@ -63,6 +65,14 @@ services:
       - "traefik.http.routers.redirs.middlewares=redirect-to-https"
       # Basic Auth
       - "traefik.http.middlewares.dev-auth.basicauth.users=admin:$$apr1$$Wqv22bo4$$wG/J3dFs1HC6IGjyyh4D41"
+
+      # Traefik dashboard
+      # - "traefik.http.routers.dashboard.rule=Host(`traefik.example.com`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))"
+      # - "traefik.http.routers.dashboard.service=api@internal"
+      # - "traefik.http.routers.dashboard.middlewares=dev-auth"
+      # - "traefik.http.routers.dashboard.entrypoints=https"
+      # - "traefik.http.routers.dashboard.tls.certresolver=ssl"
+    
     volumes:
       - traefik_logs:/logs
       - ./traefik-conf/:/traefik-conf

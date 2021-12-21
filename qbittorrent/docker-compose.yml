@@ -19,9 +19,6 @@ x-default: &default
 networks:
   traefik-net:
     external: true
-
-volumes:
-  postgres_data:
   
 services:
 
@@ -46,8 +43,7 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik-net"
-      - "traefik.http.routers.pghero.rule=Host(`qbit.example.com`)"
-      - "traefik.http.routers.pghero.entrypoints=https"
-      - "traefik.http.routers.pghero.tls.certresolver=ssl"
-      - "traefik.http.routers.pghero.middlewares=dev-auth"
-      - "traefik.http.services.pghero.loadbalancer.server.port=8080"
+      - "traefik.http.routers.qbit.rule=Host(`qbit.example.com`)"
+      - "traefik.http.routers.qbit.entrypoints=https"
+      - "traefik.http.routers.qbit.tls.certresolver=ssl"
+      - "traefik.http.services.qbit.loadbalancer.server.port=8080"

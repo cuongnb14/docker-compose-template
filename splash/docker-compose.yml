@@ -1,0 +1,33 @@
+version: '2.4'
+
+x-default:
+  &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks:
+  traefik-net:
+    external: true
+
+services:
+
+  splash:
+    <<: *default
+    image: scrapinghub/splash
+    ports:
+      - "8050:8050"
+    container_name: splash
+    hostname: splash
+    # command: --disable-private-mode -v3

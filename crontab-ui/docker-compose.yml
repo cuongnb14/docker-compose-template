@@ -1,0 +1,38 @@
+version: "3"
+
+networks: 
+  traefik-net:
+    external: true
+
+volumes:
+  crontab_db:
+  
+services:
+  crontab_ui:
+    image: alseambusher/crontab-ui:0.3.15
+    volumes:
+      - crontab_db:/crontab-ui/crontabs
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      - BASIC_AUTH_USER=admin
+      - BASIC_AUTH_PWD=admin
+    hostname: crontab_ui
+    container_name: crontab_ui
+    restart: always
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: traefik-net
+      traefik.http.routers.scheduler.rule: Host(`crontab.example.com`)
+      traefik.http.routers.scheduler.entrypoints: https
+      traefik.http.routers.scheduler.tls.certresolver: ssl
+      traefik.http.services.scheduler.loadbalancer.server.port: 8000
+    
+    networks: 
+      - traefik-net
+
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10M"
+        max-file: "3"

@@ -27,15 +27,13 @@ services:
   mysql:
     <<: *default
     image: mysql:5.7
-    networks:
-      - db-net
     volumes:
       - mysql_data:/var/lib/mysql/
       # - ./mysql-init-data/:/docker-entrypoint-initdb.d/
     environment:
-      - MYSQL_ROOT_PASSWORD=123456
-      - MYSQL_USER=sample
-      - MYSQL_PASSWORD=sample
+      - MYSQL_ROOT_PASSWORD=devroot
+      - MYSQL_USER=dev
+      - MYSQL_PASSWORD=dev
       - MYSQL_DATABASE=sample
     ports:
       - "127.0.0.1:3306:3306"

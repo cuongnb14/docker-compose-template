@@ -1,0 +1,49 @@
+version: '2.4'
+
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks:
+  traefik-net:
+    external: true
+  
+services:
+
+  qbittorrent:
+    <<: *default
+    image: lscr.io/linuxserver/qbittorrent
+    container_name: qbittorrent
+    hostname: qbittorrent
+    environment:
+      - PUID=1000
+      - PGID=1000
+      # - TZ=Europe/London
+      - WEBUI_PORT=8080
+    volumes:
+      - "./data/config:/config"
+      - "./data/downloads:/downloads"
+    ports:
+      - 6881:6881
+      - 6881:6881/udp
+      # - 8080:8080
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.qbit.rule=Host(`qbit.example.com`)"
+      - "traefik.http.routers.qbit.entrypoints=https"
+      - "traefik.http.routers.qbit.tls.certresolver=ssl"
+      - "traefik.http.services.qbit.loadbalancer.server.port=8080"

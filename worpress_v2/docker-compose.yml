@@ -1,0 +1,70 @@
+version: '2.4'
+
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks:
+  traefik-net:
+    external: true
+
+volumes:
+  wordpress_upload:
+  wordpress_plugins:
+  mysql_data:
+  
+services:
+
+  wordpress:
+    <<: *default
+    image: fc/wordpress:5.8.2-apache
+    build: .
+    container_name: wordpress
+    hostname: wordpress
+    ports:
+      - 8080:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - wordpress_upload:/usr/src/wordpress/wp-content/uploads
+      - wordpress_plugins:/usr/src/wordpress/wp-content/plugins
+
+      # - ./sources/themes/vodi/:/usr/src/wordpress/wp-content/themes/vodi/
+      # - ./sources/themes/vodi-child/:/usr/src/wordpress/wp-content/themes/vodi-child/
+
+      # - ./sources/plugins/masvideos/:/usr/src/wordpress/wp-content/plugins/masvideos/
+    labels:
+      - "traefik.enable=false"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.webhook.rule=Host(`wordpress.com`)"
+      - "traefik.http.routers.webhook.entrypoints=https"
+      - "traefik.http.routers.webhook.tls.certresolver=ssl"
+      - "traefik.http.services.webhook.loadbalancer.server.port=80"
+
+  db:
+    <<: *default
+    image: mysql:5.7
+    ports:
+      - 127.0.0.1:3306:3306
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - mysql_data:/var/lib/mysql

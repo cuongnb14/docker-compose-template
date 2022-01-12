@@ -39,8 +39,8 @@ services:
     labels:
       - "traefik.enable=false"
       - "traefik.docker.network=traefik-net"
-      - "traefik.http.routers.skyhook.rule=Host(`flower.example.com`)"
-      - "traefik.http.routers.skyhook.entrypoints=https"
-      - "traefik.http.routers.skyhook.tls.certresolver=ssl"
-      - "traefik.http.services.skyhook.loadbalancer.server.port=5555"
+      - "traefik.http.routers.flower.rule=Host(`flower.example.com`)"
+      - "traefik.http.routers.flower.entrypoints=https"
+      - "traefik.http.routers.flower.tls.certresolver=ssl"
+      - "traefik.http.services.flower.loadbalancer.server.port=5555"
 

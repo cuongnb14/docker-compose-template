@@ -1,0 +1,46 @@
+version: "2.4"
+
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks:
+  traefik-net:
+    external: true
+  
+services:
+  flower:
+    <<: *default
+    image: mher/flower
+    container_name: flower
+    hostname: flower
+    # ports:
+    #   - 127.0.0.1:5555:5555
+    # command: celery --broker=pyamqp://dev:dev@localhost:5672// flower --address=0.0.0.0 --port=5566 --broker_api=http://dev:dev@localhost:15672/api/
+    
+    environment:
+      - FLOWER_BASIC_AUTH=admin:admin
+      - FLOWER_BROKER_API=http://dev:dev@localhost:15672/api/
+      - CELERY_BROKER_URL=pyamqp://dev:dev@localhost:5672//
+      - CELERY_RESULT_BACKEND=pyamqp://dev:dev@localhost:5672//
+
+    labels:
+      - "traefik.enable=false"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.skyhook.rule=Host(`flower.example.com`)"
+      - "traefik.http.routers.skyhook.entrypoints=https"
+      - "traefik.http.routers.skyhook.tls.certresolver=ssl"
+      - "traefik.http.services.skyhook.loadbalancer.server.port=5555"
+

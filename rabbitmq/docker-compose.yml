@@ -1,17 +1,50 @@
-version: "3"
+version: "2.4"
+
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+volumes:
+  rabbitmq_data:
+  rabbitmq_log:
+
+networks:
+  traefik-net:
+    external: true
 
 services:
   rabbitmq:
-    image: rabbitmq:3.7.4
-    # volumes:
-    #   - 
+    <<: *default
+    image: 'rabbitmq:3-management'
     ports:
-      - 15672:15672
+      - 5672:5672
+      - 15672:15672 # web management
     hostname: rabbitmq
-    # restart: always
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100M"
-        max-file: "3"
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+      - rabbitmq_log:/var/log/rabbitmq/
+    labels:
+      - "traefik.enable=false"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.rabbitmq.rule=Host(`rabbitmq.example.com`)"
+      - "traefik.http.routers.rabbitmq.entrypoints=https"
+      - "traefik.http.routers.rabbitmq.tls.certresolver=ssl"
+      - "traefik.http.services.rabbitmq.loadbalancer.server.port=15672"
+
 

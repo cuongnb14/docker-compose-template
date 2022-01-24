@@ -1,0 +1,42 @@
+version: '2.4'
+
+x-default:
+  &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: unless-stopped
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks:
+  traefik-net:
+    external: true
+
+services:
+
+  gtranslator:
+    <<: *default
+    image: cuongnb14/gtranslator:1.0
+    ports:
+      - "3000:3000"
+    container_name: gtranslator
+    hostname: gtranslator
+    volumes:
+      - ./configs.js:/app/app/configs.js
+
+    labels:
+      traefik.enable: "false"
+      traefik.docker.network: traefik-net
+      traefik.http.routers.gtranslator.rule: Host(`gtranslator.example.com`)
+      traefik.http.routers.gtranslator.entrypoints: https
+      traefik.http.routers.gtranslator.tls.certresolver: ssl
+      traefik.http.services.gtranslator.loadbalancer.server.port: 3000

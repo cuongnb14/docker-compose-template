@@ -5,7 +5,7 @@ x-redash-service: &redash-service
     - postgres
     - redis
   env_file: ./env
-  restart: always
+  restart: unless-stopped
   networks:
     - traefik-net
   logging:
@@ -48,7 +48,7 @@ services:
     image: redis:5.0-alpine
     container_name: redash_redis
     hostname: redash_redis
-    restart: always
+    restart: unless-stopped
     networks:
       - traefik-net
     logging:
@@ -64,7 +64,8 @@ services:
     env_file: ./env
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    restart: always
+    command: "postgres -c fsync=off -c full_page_writes=off -c synchronous_commit=OFF"
+    restart: unless-stopped
     networks:
       - traefik-net
     logging:

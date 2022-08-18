@@ -1,6 +1,9 @@
+# For postgres
 POSTGRES_PASSWORD=dev
 
+# For redash service
 REDASH_REDIS_URL=redis://redash_redis:6379/0
 REDASH_DATABASE_URL=postgresql://postgres:dev@redash_postgres/postgres
 
 REDASH_WEB_WORKERS=4
+REDASH_COOKIE_SECRET=!!!ChangeMe!!!

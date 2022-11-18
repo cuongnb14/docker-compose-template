@@ -28,7 +28,7 @@ services:
 
   wordpress:
     <<: *default
-    image: wordpress
+    image: wordpress:php7.4-apache
     container_name: wordpress
     hostname: wordpress
     ports:

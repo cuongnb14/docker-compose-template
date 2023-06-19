@@ -1,0 +1,63 @@
+version: "2.4"
+
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  # restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+volumes:
+  mysql_data:
+  mautic_data:
+
+networks:
+  traefik-net:
+    external: true
+
+services:
+  mautic:
+    <<: *default
+    image: mautic/mautic:v4
+    environment:
+      - MAUTIC_DB_HOST=mautic_db
+      - MAUTIC_DB_USER=mautic
+      - MAUTIC_DB_PASSWORD=dev
+      - MAUTIC_DB_NAME=mautic
+      - MAUTIC_RUN_CRON_JOBS=true
+    volumes:
+      - mautic_data:/var/www/html
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.mautic.rule=Host(`mautic.example.com`)"
+      - "traefik.http.routers.mautic.entrypoints=https"
+      - "traefik.http.routers.mautic.tls.certresolver=ssl"
+      - "traefik.http.routers.mautic.middlewares=dev-auth"
+      - "traefik.http.services.mautic.loadbalancer.server.port=80"
+
+  mautic_db:
+    <<: *default
+    image: mysql:5.7
+    command:
+      [
+        "--character-set-server=utf8mb4",
+        "--collation-server=utf8mb4_general_ci",
+        "--skip-character-set-client-handshake",
+      ]
+    environment:
+      - MYSQL_USER=mautic
+      - MYSQL_PASSWORD=dev
+      - MYSQL_DATABASE=mautic
+      - MYSQL_ROOT_PASSWORD=dev
+    volumes:
+      - mysql_data:/var/lib/mysql

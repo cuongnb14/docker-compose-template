@@ -19,7 +19,10 @@ x-default: &default
 networks:
   traefik-net:
     external: true
-  
+
+volumes:
+  uptime_kuma_data:
+
 services:
   uptime_kuma:
     <<: *default

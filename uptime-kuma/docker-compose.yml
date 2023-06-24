@@ -1,0 +1,40 @@
+version: "2.4"
+
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks:
+  traefik-net:
+    external: true
+  
+services:
+  uptime_kuma:
+    <<: *default
+    image: louislam/uptime-kuma:1-alpine
+    container_name: uptime_kuma
+    hostname: uptime_kuma
+    # ports:
+    #   - 127.0.0.1:3001:3001
+    volumes:
+      - uptime_kuma_data:/app/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.uptime.rule=Host(`uptime.example.com`)"
+      - "traefik.http.routers.uptime.entrypoints=https"
+      - "traefik.http.routers.uptime.tls.certresolver=ssl"
+      - "traefik.http.services.uptime.loadbalancer.server.port=3001"
+

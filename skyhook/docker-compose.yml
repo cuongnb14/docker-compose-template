@@ -23,13 +23,13 @@ networks:
 services:
   skyhook:
     <<: *default
-    image: commit451/skyhook
+    image: cuongnb14/skyhook:1.0
     container_name: skyhook
     hostname: skyhook
-    ports:
-      - 127.0.0.1:8080:8080
+    # ports:
+    #   - 127.0.0.1:8080:8080
     labels:
-      - "traefik.enable=false"
+      - "traefik.enable=true"
       - "traefik.docker.network=traefik-net"
       - "traefik.http.routers.skyhook.rule=Host(`skyhook.example.com`)"
       - "traefik.http.routers.skyhook.entrypoints=https"

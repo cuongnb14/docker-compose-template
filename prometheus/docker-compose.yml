@@ -63,6 +63,11 @@ services:
       - 9100
     labels:
       org.label-schema.group: "monitoring"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10M"
+        max-file: "3"
 
   cadvisor:
     <<: *default

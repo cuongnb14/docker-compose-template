@@ -34,7 +34,7 @@ services:
     # ports:
     #   - 8080:80
     environment:
-      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_HOST: wordpress_db
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DB_NAME: wordpress
@@ -52,6 +52,8 @@ services:
   db:
     <<: *default
     image: mysql:5.7
+    container_name: wordpress_db
+    hostname: wordpress_db
     ports:
       - 127.0.0.1:3306:3306
     environment:

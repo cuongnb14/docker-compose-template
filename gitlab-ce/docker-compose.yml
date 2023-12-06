@@ -1,0 +1,42 @@
+version: '3.6'
+services:
+  gitlab_ce:
+    image: 'gitlab/gitlab-ce:16.6.1-ce.0'
+    restart: always
+    hostname: gitlab_ce
+    container_name: gitlab_ce
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab.example.com'
+        # Add any other gitlab.rb configuration here, each on its own line
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false
+
+    # ports:
+      # - '80:80'
+      # - '443:443'
+      # - '22:22'
+    volumes:
+      - '/var/opt/gitlab/config:/etc/gitlab'
+      - '/var/opt/gitlab/logs:/var/log/gitlab'
+      - '/var/opt/gitlab/data:/var/opt/gitlab'
+    shm_size: '256m'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.gitlab.rule=Host(`gitlab.example.com`)"
+      - "traefik.http.routers.gitlab.entrypoints=https"
+      - "traefik.http.routers.gitlab.tls.certresolver=ssl"
+      - "traefik.http.services.gitlab.loadbalancer.server.port=80"
+    networks:
+    - traefik-net
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10M"
+        max-file: "10"
+
+
+networks:
+  traefik-net:
+    external: true

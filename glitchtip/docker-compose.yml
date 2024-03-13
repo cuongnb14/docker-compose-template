@@ -10,6 +10,7 @@ x-environment:
   CELERY_WORKER_AUTOSCALE: "1,3"  # Scale between 1 and 3 to prevent excessive memory usage. Change it or remove to set it to the number of cpu cores.
   CELERY_WORKER_MAX_TASKS_PER_CHILD: "10000"
   ENABLE_USER_REGISTRATION: false
+  ENABLE_ORGANIZATION_CREATION: true
 
 x-depends_on:
   &default-depends_on

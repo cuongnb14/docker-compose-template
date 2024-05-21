@@ -1,0 +1,80 @@
+# This is a sample docker-compose file that can be used to run Joplin Server
+# along with a PostgreSQL server.
+#
+# Update the following fields in the stanza below:
+#
+# POSTGRES_USER
+# POSTGRES_PASSWORD
+# APP_BASE_URL
+#
+# APP_BASE_URL: This is the base public URL where the service will be running.
+#	- If Joplin Server needs to be accessible over the internet, configure APP_BASE_URL as follows: https://example.com/joplin. 
+#	- If Joplin Server does not need to be accessible over the internet, set the APP_BASE_URL to your server's hostname. 
+#     For Example: http://[hostname]:22300. The base URL can include the port.
+# APP_PORT: The local port on which the Docker container will listen. 
+#	- This would typically be mapped to port to 443 (TLS) with a reverse proxy.
+#	- If Joplin Server does not need to be accessible over the internet, the port can be mapped to 22300.
+
+version: '2.4'
+
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  # restart: always
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+volumes:
+  postgres_data:
+
+networks:
+  traefik-net:
+    external: true
+
+services:
+    db:
+        <<: *default
+        image: postgres:16
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        # ports:
+        #     - "5432:5432"
+        restart: unless-stopped
+        environment:
+            - POSTGRES_PASSWORD=dev
+            - POSTGRES_USER=dev
+            - POSTGRES_DB=joplin
+    app:
+        <<: *default
+        image: joplin/server:latest
+        depends_on:
+            - db
+        ports:
+            - "22300:22300"
+        restart: unless-stopped
+        environment:
+            - APP_PORT=22300
+            - APP_BASE_URL=https://joplin.example.com/joplin
+            - DB_CLIENT=pg
+            - POSTGRES_PASSWORD=dev
+            - POSTGRES_DATABASE=joplin
+            - POSTGRES_USER=dev
+            - POSTGRES_PORT=5432
+            - POSTGRES_HOST=db
+
+        labels:
+        - "traefik.enable=false"
+        - "traefik.docker.network=traefik-net"
+        - "traefik.http.routers.joplin.rule=Host(`joplin.example.com`)"
+        - "traefik.http.routers.joplin.entrypoints=https"
+        - "traefik.http.routers.joplin.tls.certresolver=ssl"
+        - "traefik.http.services.joplin.loadbalancer.server.port=22300"

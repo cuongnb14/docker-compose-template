@@ -58,21 +58,22 @@ services:
         image: joplin/server:latest
         depends_on:
             - db
-        ports:
-            - "22300:22300"
+        # ports:
+        #     - "22300:22300"
         restart: unless-stopped
         environment:
             - APP_PORT=22300
-            - APP_BASE_URL=https://joplin.example.com/joplin
+            - APP_BASE_URL=https://joplin.example.com
             - DB_CLIENT=pg
             - POSTGRES_PASSWORD=dev
             - POSTGRES_DATABASE=joplin
             - POSTGRES_USER=dev
             - POSTGRES_PORT=5432
             - POSTGRES_HOST=db
+            - MAX_TIME_DRIFT=0
 
         labels:
-        - "traefik.enable=false"
+        - "traefik.enable=true"
         - "traefik.docker.network=traefik-net"
         - "traefik.http.routers.joplin.rule=Host(`joplin.example.com`)"
         - "traefik.http.routers.joplin.entrypoints=https"

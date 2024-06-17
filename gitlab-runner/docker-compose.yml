@@ -1,0 +1,33 @@
+version: '2.4'
+
+x-default:
+  &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: unless-stopped
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks:
+  traefik-net:
+    external: true
+
+services:
+
+  gitlab_runner:
+    <<: *default
+    image: gitlab/gitlab-runner:latest
+    container_name: gitlab_runner
+    hostname: gitlab_runner
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config:/etc/gitlab-runner

@@ -1,7 +1,7 @@
 version: '3.6'
 services:
   gitlab_ce:
-    image: 'gitlab/gitlab-ce:16.6.1-ce.0'
+    image: 'gitlab/gitlab-ce:17.0.3-ce.0'
     restart: always
     hostname: gitlab_ce
     container_name: gitlab_ce

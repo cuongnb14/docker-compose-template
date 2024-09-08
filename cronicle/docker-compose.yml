@@ -1,4 +1,4 @@
-version: "3"
+
 
 networks: 
   traefik-net:
@@ -22,7 +22,7 @@ services:
       CRONICLE_base_app_url: 'http://localhost:3012'
     hostname: cronicle
     container_name: cronicle
-    restart: always
+    restart: unless-stopped
     labels:
       traefik.enable: "true"
       traefik.docker.network: traefik-net

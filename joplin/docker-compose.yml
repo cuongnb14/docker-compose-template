@@ -15,14 +15,14 @@
 #	- This would typically be mapped to port to 443 (TLS) with a reverse proxy.
 #	- If Joplin Server does not need to be accessible over the internet, the port can be mapped to 22300.
 
-version: '2.4'
+
 
 x-default: &default
   networks:
     - traefik-net
   # cpus: 0.5
   # mem_limit: 500M
-  # restart: always
+  # restart: unless-stopped
   # init: true
   # privileged: true
   # stdin_open: true

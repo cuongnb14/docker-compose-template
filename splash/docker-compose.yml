@@ -1,4 +1,4 @@
-version: '2.4'
+
 
 x-default:
   &default
@@ -6,7 +6,7 @@ x-default:
     - traefik-net
   # cpus: 0.5
   # mem_limit: 500M
-  restart: always
+  restart: unless-stopped
   # init: true
   # privileged: true
   # stdin_open: true

@@ -1,4 +1,4 @@
-version: "3"
+
 
 services:
   swarm_visualizer:
@@ -8,7 +8,7 @@ services:
     ports:
       - 9000:8080
     hostname: swarm_visualizer
-    restart: always
+    restart: unless-stopped
     logging:
       driver: "json-file"
       options:

@@ -1,4 +1,4 @@
-version: "3"
+
 
 networks: 
   traefik-net:
@@ -19,7 +19,7 @@ services:
       - BASIC_AUTH_PWD=admin
     hostname: crontab_ui
     container_name: crontab_ui
-    restart: always
+    restart: unless-stopped
     labels:
       traefik.enable: "true"
       traefik.docker.network: traefik-net

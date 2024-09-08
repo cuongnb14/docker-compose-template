@@ -1,4 +1,4 @@
-version: "3"
+
 
 services:
   cassandra:
@@ -10,7 +10,7 @@ services:
     ports:
       - 9042:9042
     hostname: cassandra
-    restart: always
+    restart: unless-stopped
     logging:
       driver: "json-file"
       options:

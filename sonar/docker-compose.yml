@@ -1,4 +1,4 @@
-version: '3.1'
+
 
 services:
   sonarqube:
@@ -27,7 +27,7 @@ services:
     ports:
       - "0.0.0.0:3309:3306"
     hostname: mysql
-    # restart: always
+    # restart: unless-stopped
     logging:
       driver: "json-file"
       options:

@@ -1,14 +1,14 @@
 # See settings from: https://devopscube.com/setup-and-configure-proxy-server/
 # --------------------------------------------------------------------------------
 
-version: "2.4"
+
 
 x-default: &default
   networks:
     - squid-net
   # cpus: 0.5
   # mem_limit: 500M
-  restart: always
+  restart: unless-stopped
   # init: true
   # privileged: true
   # stdin_open: true

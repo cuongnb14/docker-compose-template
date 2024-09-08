@@ -1,3 +1,7 @@
+# Create superuser to access django admin: exec in web container: ./manage.py createsuperuser
+# Add user via admin web without setup email
+# -------------------------------------------------------------------------------------------
+
 x-environment:
   &default-environment
   DATABASE_URL: postgres://postgres:postgres@postgres:5432/postgres

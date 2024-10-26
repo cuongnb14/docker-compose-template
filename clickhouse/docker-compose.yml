@@ -1,0 +1,40 @@
+x-default: &default
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: unless-stopped
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+volumes:
+  clickhouse_data:
+  clickhouse_logs:
+  
+services:
+  clickhouse-server:
+    <<: *default
+    image: clickhouse/clickhouse-server:24.3.12-alpine
+    container_name: clickhouse-server
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    ports:
+    - 8123:8123 
+    - 9000:9000
+    volumes:
+      - clickhouse_data:/var/lib/clickhouse
+      - clickhouse_logs:/var/log/clickhouse-server
+
+    # network_mode: host
+    # cap_add:
+    #   - SYS_NICE
+    #   - NET_ADMIN
+    #   - IPC_LOCK
+    #   - SYS_PTRACE

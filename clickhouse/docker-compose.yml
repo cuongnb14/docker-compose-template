@@ -32,6 +32,12 @@ services:
       - clickhouse_data:/var/lib/clickhouse
       - clickhouse_logs:/var/log/clickhouse-server
 
+    environment:
+      CLICKHOUSE_DB: dev
+      CLICKHOUSE_USER: dev
+      CLICKHOUSE_PASSWORD: dev
+      CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT: 1
+
     # network_mode: host
     # cap_add:
     #   - SYS_NICE

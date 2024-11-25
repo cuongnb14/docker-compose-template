@@ -1,0 +1,41 @@
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: unless-stopped
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks:
+  traefik-net:
+    external: true
+
+volumes:
+  ollama:
+  
+services:
+  opensearch:
+    <<: *default
+    image: ollama/ollama
+    container_name: ollama
+    hostname: ollama
+    ports:
+      - 127.0.0.1:11434:11434
+    volumes:
+      - ollama:/root/.ollama
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-net"
+      - "traefik.http.routers.ollama.rule=Host(`ollama.example.com`)"
+      - "traefik.http.routers.ollama.entrypoints=https"
+      - "traefik.http.routers.ollama.tls.certresolver=ssl"
+      # - "traefik.http.routers.ollama.middlewares=dev-auth"
+      - "traefik.http.services.ollama.loadbalancer.server.port=11434"

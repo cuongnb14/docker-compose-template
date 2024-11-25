@@ -22,7 +22,7 @@ volumes:
   ollama:
   
 services:
-  opensearch:
+  ollama:
     <<: *default
     image: ollama/ollama
     container_name: ollama

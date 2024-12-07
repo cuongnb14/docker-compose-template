@@ -1,0 +1,35 @@
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: unless-stopped
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks:
+  traefik-net:
+    external: true
+
+services:
+
+  dbbackup:
+    <<: *default
+    image: cuongnb14/db-backup:1.0
+    container_name: dbbackup
+    environment:
+      PG_HOST: devhost
+      PG_PORT: 5432
+      PG_USER: dev
+      PG_PASSWORD: dev
+      PG_SSLMODE: disable
+    volumes:
+      - ./backup:/backup
+      - ./config.yaml:/app/config.yaml

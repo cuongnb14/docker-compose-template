@@ -1,0 +1,9 @@
+keep: 2
+cron: 0 0 * * *
+
+exclude_databases:
+  - postgres
+
+exclude_tables:
+  demo:
+    - users

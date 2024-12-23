@@ -35,6 +35,9 @@ services:
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.http.address=:80"
       - "--entrypoints.https.address=:443"
+      - --entrypoints.http.http.redirections.entrypoint.to=https
+      - --entryPoints.http.http.redirections.entrypoint.scheme=https
+      - --entrypoints.https.asDefault=true 
       - "--certificatesresolvers.ssl.acme.httpchallenge=true"
       - "--certificatesresolvers.ssl.acme.httpchallenge.entrypoint=http"
       #- "--certificatesresolvers.ssl.acme.tlschallenge=true"

@@ -1,0 +1,39 @@
+x-default: &default
+  networks:
+    - db-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: unless-stopped
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks:
+  db-net:
+    #external: true
+
+volumes:
+  mongodb_data:
+
+services:
+  mongodb:
+    <<: *default
+    image: mongo:8.0.4
+    container_name: mongodb
+    hostname: mongodb
+    ports:
+      - "27017:27017"
+
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
+    volumes:
+      - mongodb_data:/data/db
+

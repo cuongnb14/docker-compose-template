@@ -30,7 +30,7 @@ services:
     image: emqx:5.7
     container_name: emqx
     ports:
-    - "18083:18083"
+    - "18083:18083" # Admin UI
     - "1883:1883"
     environment:
         EMQX_DASHBOARD__DEFAULT_PASSWORD: dev

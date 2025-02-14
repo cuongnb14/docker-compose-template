@@ -1,33 +1,49 @@
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: unless-stopped
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
 
+networks: 
+  traefik-net:
+    external: true
+
+volumes:
+  kafka-data:
 
 services:
-  zookeeper:
-    image: wurstmeister/zookeeper
-    ports:
-      - "2181:2181"
-    networks:
-      - zoo-back
 
   kafka:
-    image: wurstmeister/kafka
+    << : *default
+    image: confluentinc/cp-kafka:7.8.1
+    container_name: kafka
     ports:
-      - 9092:9092
+    - "9092:9092"
+    - "29092:29092"
+    - "9093:9093"
     environment:
-      KAFKA_ADVERTISED_HOST_NAME: 192.168.1.100
-      KAFKA_ADVERTISED_PORT: 9092
-      KAFKA_CREATE_TOPICS: "comment_notify:1:1,feed_published:1:1,feed_unpublished:1:1"
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,EXTERNAL://0.0.0.0:29092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_NUM_PARTITIONS: 1
+      KAFKA_LOG_RETENTION_HOURS: 24
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    hostname: kafka
-    restart: unless-stopped
-    networks:
-      - zoo-back
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100M"
-        max-file: "3"
-
-networks:
-    zoo-back:
+    - kafka-data:/var/lib/kafka/data

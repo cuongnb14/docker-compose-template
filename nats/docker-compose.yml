@@ -1,0 +1,40 @@
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: unless-stopped
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks: 
+  traefik-net:
+    external: true
+
+volumes:
+  nats-data:
+
+services:
+
+  nats:
+    << : *default
+    image: nats:2.10-scratch
+    container_name: nats
+    ports:
+    - "4222:4222"
+    - "6222:6222"
+    - "8222:8222"
+    hostname: nats-server
+    command:
+    - "-js"  # JetStream
+    - "-m"
+    - "8222" # Management
+    volumes:
+    - nats-data:/data

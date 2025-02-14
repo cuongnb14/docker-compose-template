@@ -1,0 +1,47 @@
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: unless-stopped
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+networks: 
+  traefik-net:
+    external: true
+
+volumes:
+  emqx-data:
+  emqx-log:
+
+
+services:
+
+  emqx:
+    << : *default
+    image: emqx:5.7
+    container_name: emqx
+    ports:
+    - "18083:18083"
+    - "1883:1883"
+    environment:
+        EMQX_DASHBOARD__DEFAULT_PASSWORD: dev
+    volumes:
+    - emqx-data:/opt/emqx/data
+    - emqx-log:/opt/emqx/log
+
+    labels:
+      traefik.enable: true
+      traefik.docker.network: traefik-net
+      traefik.http.routers.portainer.rule: Host(`dashboard.example.com`)
+      traefik.http.routers.portainer.entrypoints: https
+      traefik.http.routers.portainer.tls.certresolver: ssl
+      traefik.http.services.portainer.loadbalancer.server.port: 18083

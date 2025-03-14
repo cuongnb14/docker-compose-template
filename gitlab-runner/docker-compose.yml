@@ -1,9 +1,7 @@
-
-
 x-default:
   &default
   networks:
-    - traefik-net
+    - runner-net
   # cpus: 0.5
   # mem_limit: 500M
   restart: unless-stopped
@@ -18,16 +16,20 @@ x-default:
       max-file: "3"
 
 networks:
-  traefik-net:
-    external: true
+  runner-net:
 
 services:
 
   gitlab_runner:
     <<: *default
-    image: gitlab/gitlab-runner:latest
+    image: gitlab/gitlab-runner:1.0
+    build:
+      context: .
+      dockerfile: Dockerfile    
     container_name: gitlab_runner
     hostname: gitlab_runner
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./config:/etc/gitlab-runner
+      - ./scripts:/home/gitlab-runner/scripts
+      - ./ssh:/home/gitlab-runner/.ssh

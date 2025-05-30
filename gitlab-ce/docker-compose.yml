@@ -11,6 +11,14 @@ services:
         # Add any other gitlab.rb configuration here, each on its own line
         nginx['listen_port'] = 80
         nginx['listen_https'] = false
+        
+        prometheus_monitoring['enable'] = false
+        prometheus['flags'] = {
+          'storage.tsdb.path' => "/var/opt/gitlab/prometheus/data",
+          'storage.tsdb.retention.time' => "7d",
+          'storage.tsdb.retention.size' => '10GB',
+          'config.file' => "/var/opt/gitlab/prometheus/prometheus.yml"
+        }
 
     # ports:
       # - '80:80'

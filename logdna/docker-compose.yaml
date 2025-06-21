@@ -1,0 +1,28 @@
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  # restart: unless-stopped
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+services:
+  logdna:
+    <<: *default
+    image: logdna/logspout:latest
+    container_name: logdna
+    restart: always
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      LOGDNA_KEY: $KEY
+      FILTER_NAME: "<Container Name(s) with Wildcards (Optional)>"
+      TAGS: "<Comma-separated List of Tags (Optional)>"

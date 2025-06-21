@@ -1,0 +1,52 @@
+{
+  "id": null,
+  "title": "Container Logs",
+  "timezone": "browser",
+  "templating": {
+    "list": [
+      {
+        "name": "service_name",
+        "type": "query",
+        "label": "Service Name",
+        "datasource": "Loki",
+        "query": "label_values(service_name)",
+        "refresh": 2,
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": false,
+        "sort": 1
+      },
+      {
+        "name": "search",
+        "type": "textbox",
+        "label": "Search Log",
+        "description": "Find keywords in logs",
+        "query": "",
+        "refresh": 2,
+        "includeAll": false,
+        "multi": false,
+        "sort": 1
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "logs",
+      "title": "Container Logs",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "targets": [
+        {
+          "expr": "{platform=\"docker\", service_name=~\"$service_name\"} |= \"$search\"",
+          "refId": "A"
+        }
+      ],
+      "datasource": "Loki",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 10 }
+    }
+  ],
+  "schemaVersion": 30,
+  "version": 1
+}

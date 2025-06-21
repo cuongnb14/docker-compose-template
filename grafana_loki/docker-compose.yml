@@ -1,0 +1,66 @@
+x-default: &default
+  networks:
+    - traefik-net
+  # cpus: 0.5
+  # mem_limit: 500M
+  restart: unless-stopped
+  # init: true
+  # privileged: true
+  # stdin_open: true
+  # tty: true
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "10M"
+      max-file: "3"
+
+volumes:
+  grafana-data:
+  # loki-data:
+
+networks:
+  traefik-net:
+    external: true
+    
+services:
+  loki:
+    <<: *default
+    image: grafana/loki:${GRAFANA_LOKI_VERSION:-3.5.0}
+    ports:
+      - "3100:3100"
+    volumes:
+     - ./loki-config.yaml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+  
+  grafana:
+    <<: *default
+    image: grafana/grafana:${GRAFANA_VERSION:-11.6.1}
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    ports:
+      - 3000:3000/tcp
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    labels:
+      traefik.enable: true
+      traefik.docker.network: traefik-net
+      traefik.http.routers.grafana.rule: Host(`grafana.example.com`)
+      traefik.http.routers.grafana.entrypoints: https
+      traefik.http.routers.grafana.tls.certresolver: ssl
+      traefik.http.services.grafana.loadbalancer.server.port: 3000
+
+
+  alloy:
+    <<: *default
+    image: grafana/alloy:${GRAFANA_ALLOY_VERSION:-v1.8.2}
+    ports:
+      - 12345:12345
+      - 4317:4317
+      - 4318:4318
+    volumes:
+      - ./config.alloy:/etc/alloy/config.alloy
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: run --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy

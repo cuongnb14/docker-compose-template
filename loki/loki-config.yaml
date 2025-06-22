@@ -55,7 +55,8 @@ compactor:
   retention_enabled: true
   retention_delete_delay: 2h         # Optional: delay before actually deleting
   retention_delete_worker_count: 150 # Optional: workers for deletion
-
+  delete_request_store: filesystem
+  
 table_manager:
   retention_deletes_enabled: false   # Do not use if you use boltdb-shipper/TSDB
   

@@ -33,6 +33,10 @@
     {
       "type": "logs",
       "title": "Container Logs",
+      "options": {
+        "sortOrder": "Ascending",
+        "showTime": true
+      },
       "fieldConfig": {
         "defaults": {},
         "overrides": []

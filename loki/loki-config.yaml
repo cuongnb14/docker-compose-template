@@ -57,5 +57,5 @@ compactor:
   retention_delete_worker_count: 150 # Optional: workers for deletion
 
 table_manager:
-  retention_deletes_enabled: false   # Không dùng nếu bạn dùng boltdb-shipper/TSDB
+  retention_deletes_enabled: false   # Do not use if you use boltdb-shipper/TSDB
   
